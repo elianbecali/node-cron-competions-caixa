@@ -29,7 +29,7 @@ export async function updateGameFezinhaOnline(data: GetLotteryResultResponse) {
     lotofacil: {
       gameMode: "lotofacil",
       competion: data.numero_concurso,
-      prizeEstimative: data.valor_acumulado_proximo_concurso,
+      prizeEstimative: data.valor_estimado_proximo_concurso,
       drawnNumbers: data.dezenas.map(Number),
     }
   }
