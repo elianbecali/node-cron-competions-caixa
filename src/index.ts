@@ -6,11 +6,20 @@ import {getLotteryResult, updateGameAwardFezinhaOnline, updateGameEstimativeFezi
 const ADM_EMAIL = process.env.ADM_EMAIL as string
 const ADM_PASSWORD = process.env.ADM_PASSWORD as string
 
-cron.schedule('54 00 * * 1-6', async (date) => {
+cron.schedule('00 23 * * 1-6', async (date) => {
   console.log('Running at', date.toLocaleString())
 
   try {
     const data = await getLotteryResult('lotofacil')
+    const today = new Intl.DateTimeFormat('pt-br').format(new Date())
+
+    const isResultDrawnToday = data.data_concurso === today
+    
+    if (!isResultDrawnToday) {
+      console.log({ dataRealizadoConcurso: data.data_concurso, dataDeHoje: today })
+      return console.warn('Não foi realizado um sorteio hoje!')
+    }
+
     console.log({ concurso: data.numero_concurso, dezenas: data.dezenas })
 
     const  { token } = await adminLogin({
