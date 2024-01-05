@@ -1,15 +1,17 @@
 require('dotenv').config()
 import cron from 'node-cron';
-import { adminLogin, apiFezinhaOnline, getLotteryResult, updateGameAwardFezinhaOnline, updateGameEstimativeFezinhaOnline, updateGameFezinhaOnline, verifyAwardFezinhaOnline } from './services/api';
+import { adminLogin, apiFezinhaOnline } from './services/api';
+import {getLotteryResult, updateGameAwardFezinhaOnline, updateGameEstimativeFezinhaOnline, updateGameFezinhaOnline, verifyAwardFezinhaOnline} from "./services/updateResultsLotofacil"
 
 const ADM_EMAIL = process.env.ADM_EMAIL as string
 const ADM_PASSWORD = process.env.ADM_PASSWORD as string
 
-cron.schedule('05 22 * * 1-6', async (date) => {
+cron.schedule('54 00 * * 1-6', async (date) => {
   console.log('Running at', date.toLocaleString())
 
   try {
     const data = await getLotteryResult('lotofacil')
+    console.log({ concurso: data.numero_concurso, dezenas: data.dezenas })
 
     const  { token } = await adminLogin({
       email: ADM_EMAIL,
@@ -22,8 +24,6 @@ cron.schedule('05 22 * * 1-6', async (date) => {
     await updateGameEstimativeFezinhaOnline(data)
     await updateGameAwardFezinhaOnline(data)
     await verifyAwardFezinhaOnline(Number(data.numero_concurso))
-    console.log(data)
-    console.log('success')
   } catch (error) {
     console.error(error)
   }
