@@ -2,11 +2,13 @@ require('dotenv').config()
 import cron from 'node-cron';
 import { adminLogin, apiFezinhaOnline } from './services/api';
 import {getLotteryResult, updateGameAwardFezinhaOnline, updateGameEstimativeFezinhaOnline, updateGameFezinhaOnline, verifyAwardFezinhaOnline} from "./services/updateResultsLotofacil"
+import { getJogosCaixaInfo } from './services/api-caixa';
+import { createCompetition } from './services/createCompetion';
 
 const ADM_EMAIL = process.env.ADM_EMAIL as string
 const ADM_PASSWORD = process.env.ADM_PASSWORD as string
 
-cron.schedule('00 23 * * 1-6', async (date) => {
+cron.schedule('30 21 * * 1-6', async (date) => {
   console.log('Running at', date.toLocaleString())
 
   try {
@@ -22,19 +24,38 @@ cron.schedule('00 23 * * 1-6', async (date) => {
 
     console.log({ concurso: data.numero_concurso, dezenas: data.dezenas })
 
-    const  { token } = await adminLogin({
-      email: ADM_EMAIL,
-      password: ADM_PASSWORD
+    // const  { token } = await adminLogin({
+    //   email: ADM_EMAIL,
+    //   password: ADM_PASSWORD
+    // })
+
+    // apiFezinhaOnline.defaults.headers.common.Authorization = `Bearer ${token}`
+    
+    // await updateGameFezinhaOnline(data)
+    // await updateGameEstimativeFezinhaOnline(data)
+    // await updateGameAwardFezinhaOnline(data)
+    // await verifyAwardFezinhaOnline(Number(data.numero_concurso))
+
+    const dataResponseCaixa = await getJogosCaixaInfo()
+    
+    const nextLotofacilConcurse = dataResponseCaixa.payload.parametros.find(parametro => parametro.proximoConcurso?.concurso.modalidade === 'LOTOFACIL')?.proximoConcurso
+
+    const awardDate = nextLotofacilConcurse?.concurso.dataHoraSorteio.split(' ')[0].split('/').reverse().join('-')
+    const openDate = nextLotofacilConcurse?.concurso.dataAbertura.split(' ')[0].split('/').reverse().join('-')
+    const closeDate = nextLotofacilConcurse?.concurso.dataFechamento.split(' ')[0].split('/').reverse().join('-')
+
+    const responseCreateConcurse = await createCompetition({
+      gameMode: 'lotofacil',
+      competition: nextLotofacilConcurse?.concurso.numero,
+      awardDate,
+      openDate,
+      closeDate
     })
 
-    apiFezinhaOnline.defaults.headers.common.Authorization = `Bearer ${token}`
-    
-    await updateGameFezinhaOnline(data)
-    await updateGameEstimativeFezinhaOnline(data)
-    await updateGameAwardFezinhaOnline(data)
-    await verifyAwardFezinhaOnline(Number(data.numero_concurso))
+    console.log(responseCreateConcurse)
   } catch (error) {
-    console.error(error)
+    console.log('Deu erro man!')
+    console.error(JSON.stringify(error, null, 2))
   }
 
 
