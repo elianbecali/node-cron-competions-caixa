@@ -1,63 +1,11 @@
 require('dotenv').config()
 import cron from 'node-cron';
-import { adminLogin, apiFezinhaOnline } from './services/api';
-import {getLotteryResult, updateGameAwardFezinhaOnline, updateGameEstimativeFezinhaOnline, updateGameFezinhaOnline, verifyAwardFezinhaOnline} from "./services/updateResultsLotofacil"
-import { getJogosCaixaInfo } from './services/api-caixa';
-import { createCompetition } from './services/createCompetion';
+import { cronRunLotofacilResults } from './crons/lotofacil';
+import { cronRunMegasenaResults } from './crons/megasena';
 
-const ADM_EMAIL = process.env.ADM_EMAIL as string
-const ADM_PASSWORD = process.env.ADM_PASSWORD as string
+// Segunda á sábado
+cron.schedule('00 22 * * 1-6', cronRunLotofacilResults, { timezone: 'America/Sao_Paulo' })
 
-cron.schedule('30 21 * * 1-6', async (date) => {
-  console.log('Running at', date.toLocaleString())
-
-  try {
-    const data = await getLotteryResult('lotofacil')
-    const today = new Intl.DateTimeFormat('pt-br').format(new Date())
-
-    const isResultDrawnToday = data.data_concurso === today
-    
-    if (!isResultDrawnToday) {
-      console.log({ dataRealizadoConcurso: data.data_concurso, dataDeHoje: today })
-      return console.warn('Não foi realizado um sorteio hoje!')
-    }
-
-    console.log({ concurso: data.numero_concurso, dezenas: data.dezenas })
-
-    // const  { token } = await adminLogin({
-    //   email: ADM_EMAIL,
-    //   password: ADM_PASSWORD
-    // })
-
-    // apiFezinhaOnline.defaults.headers.common.Authorization = `Bearer ${token}`
-    
-    // await updateGameFezinhaOnline(data)
-    // await updateGameEstimativeFezinhaOnline(data)
-    // await updateGameAwardFezinhaOnline(data)
-    // await verifyAwardFezinhaOnline(Number(data.numero_concurso))
-
-    const dataResponseCaixa = await getJogosCaixaInfo()
-    
-    const nextLotofacilConcurse = dataResponseCaixa.payload.parametros.find(parametro => parametro.proximoConcurso?.concurso.modalidade === 'LOTOFACIL')?.proximoConcurso
-
-    const awardDate = nextLotofacilConcurse?.concurso.dataHoraSorteio.split(' ')[0].split('/').reverse().join('-')
-    const openDate = nextLotofacilConcurse?.concurso.dataAbertura.split(' ')[0].split('/').reverse().join('-')
-    const closeDate = nextLotofacilConcurse?.concurso.dataFechamento.split(' ')[0].split('/').reverse().join('-')
-
-    const responseCreateConcurse = await createCompetition({
-      gameMode: 'lotofacil',
-      competition: nextLotofacilConcurse?.concurso.numero,
-      awardDate,
-      openDate,
-      closeDate
-    })
-
-    console.log(responseCreateConcurse)
-  } catch (error) {
-    console.log('Deu erro man!')
-    console.error(JSON.stringify(error, null, 2))
-  }
-
-
-}, { timezone: 'America/Sao_Paulo' })
+// Terça, Quinta e Sábado
+cron.schedule('00 22 * * 2,4,6', cronRunMegasenaResults, { timezone: 'America/Sao_Paulo' })
 

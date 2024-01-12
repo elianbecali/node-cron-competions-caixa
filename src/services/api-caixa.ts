@@ -6,7 +6,11 @@ const API_LOTERIA_ONLINE_CAIXA_URL = "https://www.loteriasonline.caixa.gov.br/si
 export const getJogosCaixaInfo = async (
 ): Promise<GETJogosInfoCaixaResponse> => {
   try {
-    const { data } = await axios.get(API_LOTERIA_ONLINE_CAIXA_URL);
+    const { data } = await axios.get(API_LOTERIA_ONLINE_CAIXA_URL, { 
+      headers: {
+        'User-Agent': 'Node.js'
+      }
+    });
 
     return data;
   } catch (error: any) {

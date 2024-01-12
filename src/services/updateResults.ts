@@ -15,9 +15,19 @@ export async function getLotteryResult(lottery: GetLotteryResultGame) {
 }
 
 export async function updateGameFezinhaOnline(data: GetLotteryResultResponse) {
-  const body = {
-    lotofacil: {
+  const body: any = {}
+
+  if (data.nome === 'LOTOFÁCIL') {
+    body.lotofacil = {
       gameMode: "lotofacil",
+      competition: Number(data.numero_concurso),
+      drawnNumbers: data.dezenas.map(Number),
+    }
+  }
+  
+  if (data.nome === 'MEGA-SENA') {
+    body.megaSena = {
+      gameMode: "megaSena",
       competition: Number(data.numero_concurso),
       drawnNumbers: data.dezenas.map(Number),
     }
@@ -28,9 +38,19 @@ export async function updateGameFezinhaOnline(data: GetLotteryResultResponse) {
   return response.data
 }
 export async function updateGameEstimativeFezinhaOnline(data: GetLotteryResultResponse) {
-  const body = {
-    lotofacil: {
+  const body: any = {}
+
+  if (data.nome === 'LOTOFÁCIL') {
+    body.lotofacil = {
       gameMode: "lotofacil",
+      competition: Number(data.numero_concurso) + 1,
+      prizeEstimative: data.valor_estimado_proximo_concurso,
+    }
+  }
+  
+  if (data.nome === 'MEGA-SENA') {
+    body.megaSena = {
+      gameMode: "megaSena",
       competition: Number(data.numero_concurso) + 1,
       prizeEstimative: data.valor_estimado_proximo_concurso,
     }
@@ -52,10 +72,17 @@ export async function updateGameAwardFezinhaOnline(data: GetLotteryResultRespons
     }
   })
 
-  const body = {
-    gameMode: 'lotofacil',
+  const body: any = {
     competition: data.numero_concurso,
     award
+  }
+
+  if (data.nome === 'LOTOFÁCIL') {
+    body.gameMode = 'lotofacil'
+  }
+
+  if (data.nome === 'MEGA-SENA') {
+    body.gameMode = 'megaSena'
   }
 
   const response = await apiFezinhaOnline.patch('/competititions/award', body)
@@ -63,11 +90,18 @@ export async function updateGameAwardFezinhaOnline(data: GetLotteryResultRespons
   return response.data
 }
 
-export async function verifyAwardFezinhaOnline(competition: number) {
-  const body = {
-    gameMode: 'lotofacil',
-    competition,
+export async function verifyAwardFezinhaOnline(data: GetLotteryResultResponse) {
+  const body: any = {
+    competition: Number(data.numero_concurso),
     sendEmail: true
+  }
+
+  if (data.nome === 'LOTOFÁCIL') {
+    body.gameMode = 'lotofacil'
+  }
+
+  if (data.nome === 'MEGA-SENA') {
+    body.gameMode = 'megaSena'
   }
 
   const response = await apiFezinhaOnline.post('/prizes/verifyPrizes', body)
