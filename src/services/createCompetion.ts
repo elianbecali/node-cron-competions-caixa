@@ -12,11 +12,12 @@ type GameCreateCompetitionData = {
 };
 
 type BodyDataCreateCompetition = {
-  nextLotofacil?: GameCreateCompetitionData;
+  lotofacil?: GameCreateCompetitionData;
+  megaSena?: GameCreateCompetitionData;
 };
 
 type CreateCompetitionProps = {
-  gameMode: 'lotofacil'
+  gameMode: 'lotofacil' | 'megaSena'
   competition?: number
   awardDate?: string // yyyy-mm-dd
   closeDate?: string // yyyy-mm-dd
@@ -27,7 +28,7 @@ export async function createCompetition({ gameMode, competition, awardDate, clos
   const body: BodyDataCreateCompetition = {};
 
   if (gameMode === 'lotofacil') {
-    body.nextLotofacil = {
+    body.lotofacil = {
       gameMode: "lotofacil",
       isCurrent: false,
       isNext: true,
@@ -38,16 +39,23 @@ export async function createCompetition({ gameMode, competition, awardDate, clos
       prizeEstimative: 0,
     };
   }
-
-  return {
-    success: true,
-    data: body
+  if (gameMode === 'megaSena') {
+    body.megaSena = {
+      gameMode: "megaSena",
+      isCurrent: false,
+      isNext: true,
+      competition,
+      awardDate: `${awardDate}T20:00:00.000-03:00`,
+      closeDate: `${closeDate}T19:00:00.000-03:00`,
+      openDate: `${openDate}T21:00:00.000-03:00`,
+      prizeEstimative: 0,
+    };
   }
 
-  // const response = await apiFezinhaOnline.post(
-  //   "/currentCompetitions/manual",
-  //   body
-  // );
+  const response = await apiFezinhaOnline.post(
+    "/currentCompetitions/manual",
+    body,
+  );
 
-  // return response.data;
+  return response.data;
 }

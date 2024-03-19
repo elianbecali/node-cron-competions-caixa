@@ -7,21 +7,16 @@ const ADM_EMAIL = process.env.ADM_EMAIL as string
 const ADM_PASSWORD = process.env.ADM_PASSWORD as string
 
 
-export async function cronRunLotofacilResults(now: Date | "manual" | "init") {
-  console.log('Lotofácil - Running at', now.toLocaleString())
-
+export async function cronRunLotofacilResults(disableDateValidate?: boolean) {
   try {
     const data = await getLotteryResult('lotofacil')
     const today = new Intl.DateTimeFormat('pt-br').format(new Date())
 
     const isResultDrawnToday = data.data_concurso === today
     
-    if (!isResultDrawnToday) {
-      console.log({ dataRealizadoConcurso: data.data_concurso, dataDeHoje: today })
-      return console.warn('Não foi realizado um sorteio hoje!')
+    if (!isResultDrawnToday && !disableDateValidate) {
+      return console.warn(`Não há resultado da lotofacil hoje! ${today}`)
     }
-
-    console.log({ concurso: data.numero_concurso, dezenas: data.dezenas })
 
     const  { token } = await adminLogin({
       email: ADM_EMAIL,
@@ -35,23 +30,23 @@ export async function cronRunLotofacilResults(now: Date | "manual" | "init") {
     await updateGameAwardFezinhaOnline(data)
     await verifyAwardFezinhaOnline(data)
 
-    // const dataResponseCaixa = await getJogosCaixaInfo()
+    const dataResponseCaixa = await getJogosCaixaInfo()
     
-    // const nextLotofacilConcurse = dataResponseCaixa.payload.parametros.find(parametro => parametro.proximoConcurso?.concurso.modalidade === 'LOTOFACIL')?.proximoConcurso
+    const nextLotofacilConcurse = dataResponseCaixa.payload.parametros.find(parametro => parametro.proximoConcurso?.concurso.modalidade === 'LOTOFACIL')?.proximoConcurso
 
-    // const awardDate = nextLotofacilConcurse?.concurso.dataHoraSorteio.split(' ')[0].split('/').reverse().join('-')
-    // const openDate = nextLotofacilConcurse?.concurso.dataAbertura.split(' ')[0].split('/').reverse().join('-')
-    // const closeDate = nextLotofacilConcurse?.concurso.dataFechamento.split(' ')[0].split('/').reverse().join('-')
+    const awardDate = nextLotofacilConcurse?.concurso.dataHoraSorteio.split(' ')[0].split('/').reverse().join('-')
+    const openDate = nextLotofacilConcurse?.concurso.dataAbertura.split(' ')[0].split('/').reverse().join('-')
+    const closeDate = nextLotofacilConcurse?.concurso.dataFechamento.split(' ')[0].split('/').reverse().join('-')
 
-    // const responseCreateConcurse = await createCompetition({
-    //   gameMode: 'lotofacil',
-    //   competition: nextLotofacilConcurse?.concurso.numero,
-    //   awardDate,
-    //   openDate,
-    //   closeDate
-    // })
+    const responseCreateConcurse = await createCompetition({
+      gameMode: 'lotofacil',
+      competition: nextLotofacilConcurse?.concurso.numero,
+      awardDate,
+      openDate,
+      closeDate
+    })
 
-    // console.log(responseCreateConcurse)
+    console.log({ createdConcourse: responseCreateConcurse })
   } catch (error) {
     console.log('Deu erro man!')
     console.error(JSON.stringify(error, null, 2))
