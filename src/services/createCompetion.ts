@@ -52,10 +52,12 @@ export async function createCompetition({ gameMode, competition, awardDate, clos
     };
   }
 
-  const response = await apiFezinhaOnline.post(
-    "/currentCompetitions/manual",
-    body,
-  );
+  return Promise.resolve(body)
 
-  return response.data;
+  // const response = await apiFezinhaOnline.post(
+  //   "/currentCompetitions/manual",
+  //   body,
+  // );
+
+  // return response.data;
 }
