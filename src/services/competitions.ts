@@ -1,3 +1,4 @@
+import { EnumGameMode } from "./@types/gameMode";
 import { apiFezinhaOnline } from "./api";
 
 type FindCompetitionsProps = {
@@ -7,9 +8,25 @@ type FindCompetitionsProps = {
 
 export type PostFindCompetitionsResponse = Competition[]
 
-export interface Competition {
+type CurrentGameModes = {
+  megaSena: boolean
+  lotofacil: boolean
+  lotofacilDeIndependencia: boolean
+  megaDaVirada: boolean
+}
+
+export type GetCurrentCompetitionsResponse = {
+  currentGameModes: CurrentGameModes
+  nextCompetitions: Competition<EnumGameMode>[]
+  lotofacil: Competition<EnumGameMode.lotofacil>
+  megaDaVirada: Competition<EnumGameMode.megaDaVirada>
+  megaSena: Competition<EnumGameMode.megaSena>
+  lotofacilDeIndependencia: Competition<EnumGameMode.lotofacilDeIndependencia>
+}
+
+export interface Competition<T = string> {
   id: string
-  gameMode: string
+  gameMode: T
   isCurrent: boolean
   competition: number
   prizeEstimative: number
@@ -35,4 +52,10 @@ export async function findCompetitions(competition: FindCompetitionsProps) {
   const response = await apiFezinhaOnline.post<PostFindCompetitionsResponse>('/findCompetitions', body)
 
   return response.data[0]
+}
+
+export async function getCurrentCompetitions() {
+  const response = await apiFezinhaOnline.get<GetCurrentCompetitionsResponse>('/currentCompetitions')
+
+  return response.data
 }
