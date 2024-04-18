@@ -2,6 +2,7 @@ import { addDays, format, setHours } from "date-fns";
 import { EnumGameMode } from "../services/@types/gameMode";
 import { getCurrentCompetitions } from "../services/competitions";
 import { apiFezinhaOnline } from "../services/api";
+import { PostStoreCompetition } from "../services/@types/competition";
 
 function isNotValidDay(day: number, gameMode: EnumGameMode) {
   const sunday = 0;
@@ -80,10 +81,10 @@ export async function runCreateCompetition(gameMode: EnumGameMode) {
     },
   };
 
-  const createdNextCompetition = await apiFezinhaOnline.post(
+  const createdNextCompetition = await apiFezinhaOnline.post<PostStoreCompetition>(
     "/currentCompetitions/manual",
     payload
   );
 
-  return { currentCompetition, payload, createdNextCompetition };
+  return { currentCompetition, payload, nextCompetition: createdNextCompetition.data };
 }
