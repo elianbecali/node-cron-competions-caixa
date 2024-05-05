@@ -71,30 +71,30 @@ const sweepstakesToCreate = {
         },
       ],
     },
-    {
-      totalPrice: 0,
-      amountOfShares: 20,
-      amountOfSharesBought: 1,
-      oddsMultiplier: 0,
-      generate: [
-        {
-          quantityOfGames: 60,
-          quantityOfNumbers: 6,
-        },
-      ],
-    },
-    {
-      totalPrice: 0,
-      amountOfShares: 20,
-      amountOfSharesBought: 1,
-      oddsMultiplier: 0,
-      generate: [
-        {
-          quantityOfGames: 90,
-          quantityOfNumbers: 6,
-        },
-      ],
-    },
+    // {
+    //   totalPrice: 0,
+    //   amountOfShares: 20,
+    //   amountOfSharesBought: 1,
+    //   oddsMultiplier: 0,
+    //   generate: [
+    //     {
+    //       quantityOfGames: 60,
+    //       quantityOfNumbers: 6,
+    //     },
+    //   ],
+    // },
+    // {
+    //   totalPrice: 0,
+    //   amountOfShares: 20,
+    //   amountOfSharesBought: 1,
+    //   oddsMultiplier: 0,
+    //   generate: [
+    //     {
+    //       quantityOfGames: 90,
+    //       quantityOfNumbers: 6,
+    //     },
+    //   ],
+    // },
   ],
   megaDaVirada: [],
 };
