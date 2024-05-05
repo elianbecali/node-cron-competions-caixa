@@ -8,18 +8,18 @@ type RunCreateSweepstakesProps = {
 
 const sweepstakesToCreate = {
   lotofacil: [
-    {
-      totalPrice: 0,
-      amountOfShares: 20,
-      amountOfSharesBought: 1,
-      oddsMultiplier: 0,
-      generate: [
-        {
-          quantityOfGames: 50,
-          quantityOfNumbers: 15,
-        },
-      ],
-    },
+    // {
+    //   totalPrice: 0,
+    //   amountOfShares: 20,
+    //   amountOfSharesBought: 1,
+    //   oddsMultiplier: 0,
+    //   generate: [
+    //     {
+    //       quantityOfGames: 50,
+    //       quantityOfNumbers: 15,
+    //     },
+    //   ],
+    // },
     {
       totalPrice: 200,
       amountOfShares: 20,
@@ -32,30 +32,30 @@ const sweepstakesToCreate = {
         },
       ],
     },
-    {
-      totalPrice: 0,
-      amountOfShares: 20,
-      amountOfSharesBought: 1,
-      oddsMultiplier: 0,
-      generate: [
-        {
-          quantityOfGames: 100,
-          quantityOfNumbers: 15,
-        },
-      ],
-    },
-    {
-      totalPrice: 0,
-      amountOfShares: 20,
-      amountOfSharesBought: 1,
-      oddsMultiplier: 0,
-      generate: [
-        {
-          quantityOfGames: 5,
-          quantityOfNumbers: 16,
-        },
-      ],
-    },
+    // {
+    //   totalPrice: 0,
+    //   amountOfShares: 20,
+    //   amountOfSharesBought: 1,
+    //   oddsMultiplier: 0,
+    //   generate: [
+    //     {
+    //       quantityOfGames: 100,
+    //       quantityOfNumbers: 15,
+    //     },
+    //   ],
+    // },
+    // {
+    //   totalPrice: 0,
+    //   amountOfShares: 20,
+    //   amountOfSharesBought: 1,
+    //   oddsMultiplier: 0,
+    //   generate: [
+    //     {
+    //       quantityOfGames: 5,
+    //       quantityOfNumbers: 16,
+    //     },
+    //   ],
+    // },
   ],
   lotofacilDeIndependencia: [],
   megaSena: [
