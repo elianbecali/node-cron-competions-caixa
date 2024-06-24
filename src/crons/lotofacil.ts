@@ -5,8 +5,12 @@ import { findCompetitions } from '../services/competitions';
 const ADM_EMAIL = process.env.ADM_EMAIL as string
 const ADM_PASSWORD = process.env.ADM_PASSWORD as string
 
-export async function cronRunLotofacilResults() {
-  const data = await getLotteryResult('lotofacil')
+type RunLotofacilResultsProps = {
+  findCompetition?: number;
+}
+
+export async function cronRunLotofacilResults(props?: RunLotofacilResultsProps) {
+  const data = await getLotteryResult('lotofacil', props?.findCompetition)
 
   const competitionNumber = Number(data.numero_concurso)
 

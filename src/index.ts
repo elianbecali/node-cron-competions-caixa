@@ -23,7 +23,9 @@ route.get("/", (req, res: Response) => {
 
 route.get("/run/results/lotofacil", async (req, res) => {
   try {
-    const response = await cronRunLotofacilResults()
+    const competition = Number(req.query.competition)
+
+    const response = await cronRunLotofacilResults({ findCompetition: competition })
   
     res.json(response)
   } catch (error) {
@@ -33,7 +35,9 @@ route.get("/run/results/lotofacil", async (req, res) => {
 
 route.get("/run/results/megasena", async (req, res) => {
   try {
-    const response = await cronRunMegasenaResults()
+    const competition = Number(req.query.competition)
+
+    const response = await cronRunMegasenaResults({ findCompetition: competition })
     
     res.json(response)
   } catch (error) {

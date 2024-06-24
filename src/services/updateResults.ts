@@ -1,12 +1,13 @@
 import { GetLotteryResultGame, GetLotteryResultResponse } from "./@types/api"
 import { apiFezinhaOnline, apiLoteria } from "./api"
 
-export async function getLotteryResult(lottery: GetLotteryResultGame) {
+export async function getLotteryResult(lottery: GetLotteryResultGame, findCompetition?: number) {
   const response = await apiLoteria.get<GetLotteryResultResponse>(
     '/resultado',
     { 
       params: {
-        loteria: lottery
+        loteria: lottery,
+        concurso: findCompetition
       }
     }
   )
