@@ -1,4 +1,5 @@
 import { GetLotteryResultGame, GetLotteryResultResponse } from "./@types/api"
+import { EnumGameMode } from "./@types/gameMode"
 import { apiFezinhaOnline, apiLoteria } from "./api"
 
 export async function getLotteryResult(lottery: GetLotteryResultGame, findCompetition?: number) {
@@ -15,10 +16,10 @@ export async function getLotteryResult(lottery: GetLotteryResultGame, findCompet
   return response.data
 }
 
-export async function updateGameFezinhaOnline(data: GetLotteryResultResponse) {
+export async function updateGameFezinhaOnline(data: GetLotteryResultResponse, game: EnumGameMode) {
   const body: any = {}
 
-  if (data.nome === 'LOTOFÁCIL') {
+  if (game === EnumGameMode.lotofacil) {
     body.lotofacil = {
       gameMode: "lotofacil",
       competition: Number(data.numero_concurso),
@@ -26,9 +27,25 @@ export async function updateGameFezinhaOnline(data: GetLotteryResultResponse) {
     }
   }
   
-  if (data.nome === 'MEGA-SENA') {
+  if (game === EnumGameMode.megaSena) {
     body.megaSena = {
       gameMode: "megaSena",
+      competition: Number(data.numero_concurso),
+      drawnNumbers: data.dezenas.map(Number),
+    }
+  }
+
+  if (game === EnumGameMode.lotofacilDeIndependencia) {
+    body.lotofacilDeIndependencia = {
+      gameMode: "lotofacilDeIndependencia",
+      competition: Number(data.numero_concurso),
+      drawnNumbers: data.dezenas.map(Number),
+    }
+  }
+
+  if (game === EnumGameMode.megaDaVirada) {
+    body.megaDaVirada = {
+      gameMode: "megaDaVirada",
       competition: Number(data.numero_concurso),
       drawnNumbers: data.dezenas.map(Number),
     }
@@ -38,20 +55,34 @@ export async function updateGameFezinhaOnline(data: GetLotteryResultResponse) {
   
   return response.data
 }
-export async function updateGameEstimativeFezinhaOnline(data: GetLotteryResultResponse) {
+export async function updateGameEstimativeFezinhaOnline(data: GetLotteryResultResponse, game: EnumGameMode) {
   const body: any = {}
 
-  if (data.nome === 'LOTOFÁCIL') {
+  if (game === EnumGameMode.lotofacil) {
     body.lotofacil = {
-      gameMode: "lotofacil",
+      gameMode: EnumGameMode.lotofacil,
       competition: Number(data.numero_concurso) + 1,
       prizeEstimative: data.valor_estimado_proximo_concurso,
     }
   }
   
-  if (data.nome === 'MEGA-SENA') {
+  if (game === EnumGameMode.megaSena) {
     body.megaSena = {
-      gameMode: "megaSena",
+      gameMode: EnumGameMode.megaSena,
+      competition: Number(data.numero_concurso) + 1,
+      prizeEstimative: data.valor_estimado_proximo_concurso,
+    }
+  }
+  if (game === EnumGameMode.lotofacilDeIndependencia) {
+    body.lotofacilDeIndependencia = {
+      gameMode: EnumGameMode.lotofacilDeIndependencia,
+      competition: Number(data.numero_concurso) + 1,
+      prizeEstimative: data.valor_estimado_proximo_concurso,
+    }
+  }
+  if (game === EnumGameMode.megaDaVirada) {
+    body.megaDaVirada = {
+      gameMode: EnumGameMode.megaDaVirada,
       competition: Number(data.numero_concurso) + 1,
       prizeEstimative: data.valor_estimado_proximo_concurso,
     }
@@ -62,7 +93,7 @@ export async function updateGameEstimativeFezinhaOnline(data: GetLotteryResultRe
   return response.data
 }
 
-export async function updateGameAwardFezinhaOnline(data: GetLotteryResultResponse) {
+export async function updateGameAwardFezinhaOnline(data: GetLotteryResultResponse, game: EnumGameMode) {
   const award = data.premiacao.map(premio => {
     const acertos = Number(premio.quantidade_acertos.split(' ')[0])
 
@@ -74,16 +105,9 @@ export async function updateGameAwardFezinhaOnline(data: GetLotteryResultRespons
   })
 
   const body: any = {
+    gameMode: game,
     competition: data.numero_concurso,
     award
-  }
-
-  if (data.nome === 'LOTOFÁCIL') {
-    body.gameMode = 'lotofacil'
-  }
-
-  if (data.nome === 'MEGA-SENA') {
-    body.gameMode = 'megaSena'
   }
 
   const response = await apiFezinhaOnline.patch('/competititions/award', body)
@@ -91,18 +115,11 @@ export async function updateGameAwardFezinhaOnline(data: GetLotteryResultRespons
   return response.data
 }
 
-export async function verifyAwardFezinhaOnline(data: GetLotteryResultResponse) {
+export async function verifyAwardFezinhaOnline(data: GetLotteryResultResponse, game: EnumGameMode) {
   const body: any = {
+    gameMode: game,
     competition: Number(data.numero_concurso),
     sendEmail: true
-  }
-
-  if (data.nome === 'LOTOFÁCIL') {
-    body.gameMode = 'lotofacil'
-  }
-
-  if (data.nome === 'MEGA-SENA') {
-    body.gameMode = 'megaSena'
   }
 
   const response = await apiFezinhaOnline.post('/prizes/verifyPrizes', body)

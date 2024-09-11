@@ -2,7 +2,7 @@ import { EnumGameMode } from "./@types/gameMode";
 import { apiFezinhaOnline } from "./api";
 
 type FindCompetitionsProps = {
-  gameMode: 'lotofacil' | 'megaSena';
+  gameMode: EnumGameMode;
   competition: number
 }
 

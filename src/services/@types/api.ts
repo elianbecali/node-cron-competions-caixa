@@ -1,4 +1,6 @@
-export type GetLotteryResultGame = "lotofacil" | "megasena"
+import { EnumGameMode } from "./gameMode"
+
+export type GetLotteryResultGame = EnumGameMode.lotofacil | EnumGameMode.megaSena
 
 export interface GetLotteryResultResponse {
   nome: "MEGA-SENA" | "LOTOFÁCIL"
